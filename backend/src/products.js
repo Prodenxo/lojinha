@@ -11,7 +11,7 @@ const parseImages = (row) => ({
   images: typeof row.images === "string" ? JSON.parse(row.images) : (row.images ?? []),
 });
 
-export const wrap = (handler) => (req, res, next) => handler(req, res).catch(next);
+export const wrap = (handler) => (req, res, next) => handler(req, res, next).catch(next);
 
 function slugify(text) {
   return text

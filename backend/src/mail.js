@@ -69,13 +69,13 @@ export const sendDeliveredEmail = (order) =>
     }),
   );
 
-export const sendAccessEmail = (to, token) =>
+export const sendResetEmail = (to, token) =>
   send(
     to,
     buildEmail({
-      title: "Acesse seus pedidos",
-      text: "Use o botão abaixo para ver todos os seus pedidos. O link vale por 24 horas. Se você não pediu este acesso, ignore este e-mail.",
-      buttonLabel: "Ver meus pedidos",
-      buttonUrl: `${publicUrl()}/meus-pedidos?token=${token}`,
+      title: "Redefinir sua senha",
+      text: "Use o botão abaixo para criar uma nova senha. O link vale por 1 hora. Se você não pediu, ignore este e-mail.",
+      buttonLabel: "Criar nova senha",
+      buttonUrl: `${publicUrl()}/recuperar-senha?token=${token}`,
     }),
   );

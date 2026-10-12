@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { api, clearSession, useSession } from "@/lib/auth";
 import { formatBRL } from "@/lib/format";
 
 type Order = {
@@ -20,88 +20,55 @@ const STATUS: Record<Order["status"], string> = {
   cancelled: "Cancelado",
 };
 
-function RequestLink({ notice }: { notice?: string }) {
-  const [email, setEmail] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+export function MyOrders() {
+  const session = useSession();
+  const token = session?.token;
+  const [orders, setOrders] = useState<Order[] | null>(null);
   const [error, setError] = useState("");
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setState("sending");
-    setError("");
-    const res = await fetch("/api/my-orders/request", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email }),
-    }).catch(() => null);
-    if (res?.ok) return setState("sent");
-    const body = await res?.json().catch(() => ({}));
-    setError(body?.error ?? "Não foi possível enviar agora. Tente novamente.");
-    setState("idle");
-  }
+  useEffect(() => {
+    if (!token) return;
+    api<{ data: Order[] }>("account/orders", { token })
+      .then((res) => setOrders(res.data))
+      .catch((err) => setError((err as Error).message));
+  }, [token]);
 
-  if (state === "sent") {
+  if (!session) {
     return (
-      <p className="rounded-2xl border border-border bg-surface p-5">
-        Se houver pedidos nesse e-mail, enviamos um link de acesso para ele. Confira a caixa de
-        entrada e o spam. O link vale por 24 horas.
-      </p>
+      <div className="flex flex-col gap-3">
+        <p className="text-muted">Entre na sua conta para ver seus pedidos.</p>
+        <Link
+          href="/entrar?next=/meus-pedidos"
+          className="rounded-xl bg-accent py-3 text-center font-semibold text-black transition hover:bg-accent-strong"
+        >
+          Entrar ou criar conta
+        </Link>
+      </div>
     );
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3">
-      {notice && <p className="text-sm text-red-400">{notice}</p>}
-      <p className="text-muted">
-        Informe o e-mail usado na compra. Enviamos um link para você ver todos os seus pedidos, sem
-        senha.
-      </p>
-      <input
-        type="email"
-        required
-        autoComplete="email"
-        placeholder="Seu e-mail"
-        className="w-full rounded-xl border border-border bg-surface px-4 py-3 outline-none placeholder:text-muted focus:border-accent"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button
-        disabled={state === "sending"}
-        className="rounded-xl bg-accent py-3 font-semibold text-black transition hover:bg-accent-strong disabled:opacity-60"
-      >
-        {state === "sending" ? "Enviando..." : "Enviar link de acesso"}
-      </button>
-      {error && <p className="text-sm text-red-400">{error}</p>}
-    </form>
-  );
-}
-
-export function MyOrders() {
-  const token = useSearchParams().get("token");
-  const [orders, setOrders] = useState<Order[] | null>(null);
-  const [email, setEmail] = useState("");
-  const [invalid, setInvalid] = useState("");
-
-  useEffect(() => {
-    if (!token) return;
-    fetch(`/api/my-orders?token=${encodeURIComponent(token)}`)
-      .then(async (res) => {
-        const body = await res.json().catch(() => ({}));
-        if (!res.ok) return setInvalid(body.error ?? "Link inválido ou vencido. Peça um novo.");
-        setEmail(body.email);
-        setOrders(body.data);
-      })
-      .catch(() => setInvalid("Não foi possível carregar seus pedidos. Tente novamente."));
-  }, [token]);
-
-  if (!token || invalid) return <RequestLink notice={invalid} />;
-  if (!orders) return <div className="h-40 animate-pulse rounded-2xl bg-surface" />;
-
-  return (
     <div className="flex flex-col gap-3">
-      <p className="text-sm text-muted">Pedidos de {email}</p>
-      {orders.length === 0 && <p className="py-8 text-center text-muted">Nenhum pedido ainda.</p>}
-      {orders.map((order) => (
+      <div className="flex items-center justify-between gap-3 text-sm text-muted">
+        <span>
+          {session.name} ({session.email})
+        </span>
+        <button
+          className="underline hover:text-foreground"
+          onClick={() => {
+            api("auth/logout", { method: "POST", token: session.token }).catch(() => null);
+            clearSession();
+          }}
+        >
+          Sair
+        </button>
+      </div>
+      {error && <p className="text-sm text-red-400">{error}</p>}
+      {!orders && !error && <div className="h-40 animate-pulse rounded-2xl bg-surface" />}
+      {orders?.length === 0 && (
+        <p className="py-8 text-center text-muted">Você ainda não fez nenhum pedido.</p>
+      )}
+      {orders?.map((order) => (
         <Link
           key={order.code}
           href={`/pedido/${order.code}`}

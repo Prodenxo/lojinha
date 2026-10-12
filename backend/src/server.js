@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { authRouter } from "./auth.js";
 import { pool } from "./db.js";
 import { fulfillPending } from "./fulfill.js";
 import { migrate } from "./migrate.js";
@@ -21,6 +22,7 @@ app.get("/health", async (_req, res) => {
 });
 
 app.use("/api", publicRouter);
+app.use("/api", authRouter);
 app.use("/api", ordersRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin", adminOrdersRouter);

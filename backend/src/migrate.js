@@ -13,6 +13,7 @@ const ADDED_COLUMNS = {
     fulfill_error: "VARCHAR(500) NULL",
     fulfill_attempts: "INT NOT NULL DEFAULT 0",
     fulfilling_at: "DATETIME NULL",
+    customer_id: "INT UNSIGNED NULL",
   },
 };
 

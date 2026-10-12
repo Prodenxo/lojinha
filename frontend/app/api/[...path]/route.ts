@@ -7,6 +7,8 @@ async function proxy(req: Request, ctx: { params: Promise<{ path: string[] }> })
   const headers: Record<string, string> = { "content-type": "application/json" };
   const token = req.headers.get("x-admin-token");
   if (token) headers["x-admin-token"] = token;
+  const authorization = req.headers.get("authorization");
+  if (authorization) headers.authorization = authorization;
 
   try {
     const res = await fetch(url, {

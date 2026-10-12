@@ -1,19 +1,11 @@
 import { randomBytes } from "node:crypto";
 import { Router } from "express";
+import { requireCustomer } from "./auth.js";
 import { pool } from "./db.js";
 import { fulfillOrder } from "./fulfill.js";
 import { checkPayment, createCheckoutLink } from "./infinitepay.js";
-import { mailConfigured, sendAccessEmail, sendDeliveredEmail, sendPaidEmail } from "./mail.js";
+import { sendDeliveredEmail, sendPaidEmail } from "./mail.js";
 import { requireAdmin, wrap } from "./products.js";
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Aceita o telefone como o cliente digitar e devolve no formato +55DDDNÚMERO.
-function normalizePhone(raw) {
-  let digits = String(raw ?? "").replace(/\D/g, "");
-  if (digits.length === 10 || digits.length === 11) digits = `55${digits}`;
-  return digits.length === 12 || digits.length === 13 ? `+${digits}` : null;
-}
 
 // Tenta a entrega automática; se não sair na hora, avisa o cliente que o pagamento entrou.
 // (Quando sai, quem avisa é o e-mail de entrega.)
@@ -50,13 +42,12 @@ async function confirmPayment(code, { transactionNsu, slug, receiptUrl }) {
 // ---------- Rotas públicas ----------
 export const ordersRouter = Router();
 
+// Comprar exige conta: e-mail e WhatsApp vêm do cadastro.
 ordersRouter.post(
   "/orders",
+  requireCustomer,
   wrap(async (req, res) => {
-    const email = String(req.body.email ?? "").trim().toLowerCase();
-    const phone = normalizePhone(req.body.phone);
-    if (!EMAIL.test(email)) return res.status(400).json({ error: "Informe um e-mail válido" });
-    if (!phone) return res.status(400).json({ error: "Informe um WhatsApp válido, com DDD" });
+    const { id: customerId, email, phone } = req.customer;
     if (!process.env.INFINITEPAY_HANDLE || !process.env.PUBLIC_URL) {
       return res.status(503).json({ error: "Pagamento ainda não configurado" });
     }
@@ -74,9 +65,9 @@ ordersRouter.post(
     const code = randomBytes(12).toString("hex");
 
     await pool.query(
-      `INSERT INTO orders (code, product_id, product_name, amount_cents, customer_email, customer_phone)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [code, product.id, product.name, amountCents, email, phone],
+      `INSERT INTO orders (code, product_id, product_name, amount_cents, customer_email, customer_phone, customer_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [code, product.id, product.name, amountCents, email, phone, customerId],
     );
 
     let checkoutUrl;
@@ -130,50 +121,6 @@ ordersRouter.post(
     });
     if (result === "unknown") return res.status(404).json({ error: "Pedido não encontrado" });
     res.json({ result });
-  }),
-);
-
-// "Meus pedidos" sem senha: manda um link de acesso para o e-mail informado.
-ordersRouter.post(
-  "/my-orders/request",
-  wrap(async (req, res) => {
-    const email = String(req.body.email ?? "").trim().toLowerCase();
-    if (!EMAIL.test(email)) return res.status(400).json({ error: "Informe um e-mail válido" });
-    if (!mailConfigured()) return res.status(503).json({ error: "Envio de e-mail ainda não configurado" });
-
-    const [orders] = await pool.query("SELECT 1 FROM orders WHERE customer_email = ? LIMIT 1", [email]);
-    const [recent] = await pool.query(
-      "SELECT 1 FROM order_access WHERE email = ? AND created_at > NOW() - INTERVAL 1 MINUTE LIMIT 1",
-      [email],
-    );
-    if (orders.length && !recent.length) {
-      const token = randomBytes(24).toString("hex");
-      await pool.query(
-        "INSERT INTO order_access (token, email, expires_at) VALUES (?, ?, NOW() + INTERVAL 1 DAY)",
-        [token, email],
-      );
-      await sendAccessEmail(email, token);
-    }
-    // Mesma resposta exista ou não pedido, para não revelar quem é cliente.
-    res.json({ ok: true });
-  }),
-);
-
-ordersRouter.get(
-  "/my-orders",
-  wrap(async (req, res) => {
-    const [access] = await pool.query(
-      "SELECT email FROM order_access WHERE token = ? AND expires_at > NOW()",
-      [String(req.query.token ?? "")],
-    );
-    if (!access.length) return res.status(401).json({ error: "Link inválido ou vencido. Peça um novo." });
-    const [rows] = await pool.query(
-      `SELECT code, product_name, amount_cents, status, created_at FROM orders
-       WHERE customer_email = ? AND (status <> 'cancelled' OR paid_at IS NOT NULL)
-       ORDER BY created_at DESC LIMIT 100`,
-      [access[0].email],
-    );
-    res.json({ email: access[0].email, data: rows });
   }),
 );
 

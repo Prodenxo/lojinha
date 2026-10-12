@@ -3,3 +3,4 @@ node_modules/
 .env*
 !.env.example
 partner-api-docs.html
+PROXIMOS_PASSOS.md

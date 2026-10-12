@@ -131,7 +131,8 @@ A InfinitePay não usa chave de API, só a InfiniteTag. O formato da resposta de
 - **`ADMIN_TOKEN`:** em produção ainda estava `troque-este-token` no último teste. Trocar; quem souber esse valor edita produtos e vê os pedidos.
 - **Chave do fornecedor:** foi exposta em conversa; vale gerar outra.
 - **Checkout sem teste real:** fazer uma compra de valor baixo antes de divulgar.
-- **E-mail:** a loja avisa o cliente (pagamento aprovado e pedido entregue) e tem "Meus pedidos" sem senha, por link enviado ao e-mail. Só funciona depois de configurar `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` e `MAIL_FROM` no backend; sem isso nenhum e-mail sai. O e-mail de entrega leva só o link do pedido, não o login e a senha. Não testado com envio real.
+- **Conta do cliente:** comprar exige conta (nome, e-mail, WhatsApp e senha de 8+ caracteres). "Meus pedidos" mostra os pedidos feitos com a conta. Senhas ficam guardadas com hash (scrypt), sessão de 30 dias. A redefinição de senha é por link enviado ao e-mail.
+- **E-mail:** a loja avisa o cliente (pagamento aprovado e pedido entregue) e envia o link de redefinição de senha. Só funciona depois de configurar `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` e `MAIL_FROM` no backend; sem isso nenhum e-mail sai. O e-mail de entrega leva só o link do pedido, não o login e a senha. Não testado com envio real.
 - **Entrega automática sem teste real:** o caminho de sucesso só será exercitado na primeira compra com saldo no fornecedor.
 - **Saldo no fornecedor:** US$ 0,30, insuficiente para comprar qualquer produto.
 - **Natureza dos produtos:** contas e assinaturas de terceiros revendidas costumam violar os termos dessas empresas e podem ser canceladas; quem responde ao cliente é você. Vale ter política de garantia e reembolso.
