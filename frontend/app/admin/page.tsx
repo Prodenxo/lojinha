@@ -13,6 +13,8 @@ type AdminProduct = {
   cost_usd: number | null;
   price_brl: number;
   price_locked: number;
+  promo_price_brl: number | null;
+  featured: number;
   stock: number;
   active: number;
   images: string[];
@@ -24,6 +26,8 @@ type Draft = {
   category: string;
   emoji: string;
   price_brl: string;
+  promo_price_brl: string;
+  featured: boolean;
   stock: string;
   active: boolean;
   description: string;
@@ -36,6 +40,8 @@ const EMPTY: Draft = {
   category: "",
   emoji: "",
   price_brl: "",
+  promo_price_brl: "",
+  featured: false,
   stock: "0",
   active: true,
   description: "",
@@ -124,6 +130,10 @@ export default function AdminPage() {
         category: draft.category.trim() || "Outros",
         emoji: draft.emoji.trim() || null,
         price_brl: Number(draft.price_brl.replace(",", ".")),
+        promo_price_brl: draft.promo_price_brl.trim()
+          ? Number(draft.promo_price_brl.replace(",", "."))
+          : null,
+        featured: draft.featured ? 1 : 0,
         stock: Number(draft.stock),
         active: draft.active ? 1 : 0,
         description: draft.description.trim() || null,
@@ -151,6 +161,14 @@ export default function AdminPage() {
       });
     });
 
+  const toggleFeatured = (p: AdminProduct) =>
+    run("Destaque", async () => {
+      await call(`products/${p.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ featured: p.featured ? 0 : 1 }),
+      });
+    });
+
   const edit = (p: AdminProduct) =>
     setDraft({
       id: p.id,
@@ -158,6 +176,8 @@ export default function AdminPage() {
       category: p.category,
       emoji: p.emoji ?? "",
       price_brl: String(p.price_brl),
+      promo_price_brl: p.promo_price_brl != null ? String(p.promo_price_brl) : "",
+      featured: !!p.featured,
       stock: String(p.stock),
       active: !!p.active,
       description: p.description ?? "",
@@ -223,6 +243,10 @@ export default function AdminPage() {
             <input className={input} inputMode="decimal" value={draft.price_brl} onChange={(e) => set({ price_brl: e.target.value })} />
           </label>
           <label className="text-sm">
+            Preço promocional (R$) — opcional
+            <input className={input} inputMode="decimal" value={draft.promo_price_brl} onChange={(e) => set({ promo_price_brl: e.target.value })} />
+          </label>
+          <label className="text-sm">
             Estoque
             <input className={input} inputMode="numeric" value={draft.stock} onChange={(e) => set({ stock: e.target.value })} />
           </label>
@@ -237,6 +261,10 @@ export default function AdminPage() {
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={draft.active} onChange={(e) => set({ active: e.target.checked })} />
             Visível na loja
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={draft.featured} onChange={(e) => set({ featured: e.target.checked })} />
+            Em destaque
           </label>
           <div className="flex justify-end gap-2">
             <button className={button} onClick={() => setDraft(null)}>
@@ -269,6 +297,14 @@ export default function AdminPage() {
             {products.map((p) => (
               <tr key={p.id} className={`border-t border-border ${p.active ? "" : "opacity-50"}`}>
                 <td className="p-3">
+                  <button
+                    className={`mr-2 text-base ${p.featured ? "text-accent-strong" : "text-muted hover:text-accent"}`}
+                    title={p.featured ? "Tirar do destaque" : "Colocar em destaque"}
+                    disabled={busy}
+                    onClick={() => toggleFeatured(p)}
+                  >
+                    {p.featured ? "★" : "☆"}
+                  </button>
                   {p.name}
                   {!p.partner_id && <span className="ml-2 text-xs text-accent">manual</span>}
                 </td>
@@ -276,6 +312,9 @@ export default function AdminPage() {
                 <td className="p-3">{p.cost_usd != null ? `US$ ${p.cost_usd.toFixed(2)}` : "—"}</td>
                 <td className="p-3 whitespace-nowrap">
                   {formatBRL(p.price_brl)}
+                  {p.promo_price_brl != null && (
+                    <span className="ml-1 text-accent-strong">→ {formatBRL(p.promo_price_brl)}</span>
+                  )}
                   {!!p.price_locked && <span title="Preço fixado manualmente"> 🔒</span>}
                 </td>
                 <td className="p-3">{p.stock}</td>

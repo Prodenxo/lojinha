@@ -8,6 +8,8 @@ export type Product = {
   delivery_type: string | null;
   duration_days: number | null;
   price_brl: number;
+  promo_price_brl: number | null;
+  featured: number;
   stock: number;
   images: string[];
 };

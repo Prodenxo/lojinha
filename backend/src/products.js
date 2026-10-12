@@ -4,7 +4,7 @@ import { fetchUsage } from "./partner.js";
 import { syncCatalog } from "./sync.js";
 
 const PUBLIC_FIELDS =
-  "id, slug, name, description, category, emoji, delivery_type, duration_days, price_brl, stock, images";
+  "id, slug, name, description, category, emoji, delivery_type, duration_days, price_brl, promo_price_brl, featured, stock, images";
 
 const parseImages = (row) => ({
   ...row,
@@ -40,7 +40,7 @@ publicRouter.get(
     }
     const [rows] = await pool.query(
       `SELECT ${PUBLIC_FIELDS} FROM products WHERE ${where.join(" AND ")}
-       ORDER BY (stock > 0) DESC, category, name`,
+       ORDER BY (stock > 0) DESC, featured DESC, category, name`,
       params,
     );
     res.json({ data: rows.map(parseImages) });
@@ -80,7 +80,10 @@ adminRouter.use((req, res, next) => {
   next();
 });
 
-const EDITABLE = ["name", "description", "category", "emoji", "price_brl", "stock", "active", "images"];
+const EDITABLE = [
+  "name", "description", "category", "emoji", "price_brl", "promo_price_brl",
+  "featured", "stock", "active", "images",
+];
 
 function pickEditable(body) {
   const data = {};
@@ -119,8 +122,11 @@ adminRouter.put(
   wrap(async (req, res) => {
     const data = pickEditable(req.body);
     if (req.body.price_locked !== undefined) data.price_locked = req.body.price_locked ? 1 : 0;
-    // Editar o preço manualmente trava o valor contra a sincronização.
-    else if (data.price_brl !== undefined) data.price_locked = 1;
+    // Mudar o preço manualmente trava o valor contra a sincronização.
+    else if (data.price_brl !== undefined) {
+      const [current] = await pool.query("SELECT price_brl FROM products WHERE id = ?", [req.params.id]);
+      if (current.length && Number(current[0].price_brl) !== Number(data.price_brl)) data.price_locked = 1;
+    }
     if (!Object.keys(data).length) return res.status(400).json({ error: "Nada para atualizar" });
     const [result] = await pool.query("UPDATE products SET ? WHERE id = ?", [data, req.params.id]);
     if (!result.affectedRows) return res.status(404).json({ error: "Produto não encontrado" });

@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS products (
   cost_usd      DECIMAL(10,2) NULL,
   price_brl     DECIMAL(10,2) NOT NULL DEFAULT 0,
   price_locked  TINYINT(1) NOT NULL DEFAULT 0,
+  promo_price_brl DECIMAL(10,2) NULL,
+  featured      TINYINT(1) NOT NULL DEFAULT 0,
   stock         INT NOT NULL DEFAULT 0,
   images        JSON NULL,
   active        TINYINT(1) NOT NULL DEFAULT 1,

@@ -4,7 +4,8 @@ import { Suspense } from "react";
 import { ProductVisual } from "@/components/ProductVisual";
 import { getProduct } from "@/lib/api";
 import { categoryLabel } from "@/lib/brands";
-import { deliveryLabel, durationLabel, formatBRL } from "@/lib/format";
+import { Price } from "@/components/Price";
+import { deliveryLabel, durationLabel } from "@/lib/format";
 
 type Params = Promise<{ slug: string }>;
 
@@ -48,7 +49,7 @@ async function ProductDetail({ params }: { params: Params }) {
 
       <div className="flex flex-col gap-5">
         <h1 className="text-2xl font-semibold tracking-tight">{product.name}</h1>
-        <p className="text-3xl font-semibold text-accent-strong">{formatBRL(product.price_brl)}</p>
+        <Price product={product} size="lg" />
 
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {facts.map(([label, value]) => (

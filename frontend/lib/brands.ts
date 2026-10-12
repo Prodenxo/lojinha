@@ -38,6 +38,7 @@ const COLORS: Record<string, string> = {
 
 const GROUP_LABELS: Record<string, string> = {
   "Official Subscriptions 12m": "Assinaturas 12 meses",
+  VPN: "VPN",
 };
 
 export const categoryLabel = (category: string) => GROUP_LABELS[category] ?? category;
@@ -53,4 +54,12 @@ export function brandColor(brand: string) {
   let hue = 0;
   for (const char of brand) hue = (hue * 31 + char.charCodeAt(0)) % 360;
   return `hsl(${hue} 55% 42%)`;
+}
+
+// Arquivos em public/logos/<slug>.png
+const LOGOS = new Set(["adobe", "airtable", "arize", "avira", "bolt", "canva", "capcut", "chatgpt", "chatprd", "claude", "coursera", "crunchyroll", "cursor", "descript", "duolingo", "eleven-labs", "elevenlabs", "express", "factory", "figma", "framer", "gamma", "gemini", "granola", "grok", "gumloop", "higgsfield", "ilovepdf", "intercom", "jam", "lennys", "leonardo", "linear", "linkedin", "lovable", "magic", "manus", "microsoft", "mobbin", "n8n", "netflix", "nord", "notion", "pangram", "posthog", "prime-video", "proton", "railway", "replit", "runway", "spotify", "telegram", "wiktor-ai", "wisper", "youtube"]);
+
+export function brandLogo(brand: string) {
+  const slug = brand.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  return LOGOS.has(slug) ? `/logos/${slug}.png` : null;
 }
