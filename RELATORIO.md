@@ -78,6 +78,9 @@ Variáveis do backend: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 - **Importação:** automática ao subir o backend e a cada 30 minutos (`SYNC_INTERVAL_MINUTES`), ou pelo botão "Sincronizar fornecedor". Atualiza custo, estoque, duração e tipo de entrega; preserva nome, descrição, fotos, categoria, destaque e promoção.
 - **Cadastro manual:** botão "Novo produto" no admin.
 - **Preço:** `custo em USD × USD_BRL_RATE × (1 + MARKUP_PERCENT / 100)`. Com 5,50 e 100%, US$ 0,95 vira R$ 10,45. Mudar o preço no admin trava o valor (🔒) contra a sincronização.
+- **Preços em vigor (12/10/2026):** os da coluna "Sugerido" do `ANALISE_PRECOS.md`, aplicados e travados em 86 produtos. Por estarem travados, não acompanham mudanças de custo do fornecedor nem do câmbio; produtos novos entram pela fórmula acima.
+- **Ocultados por não compensarem:** ChatGPT Plus (código), ChatGPT Go (código), Telegram Premium 6 e 12 meses e Disney+ Premium.
+- **Títulos e descrições:** em português em 85 produtos. Produtos novos do fornecedor entram com o nome original em inglês e sem descrição.
 - **Destaque:** estrela ao lado do produto no admin; aparece na seção "★ Destaques" no topo da loja.
 - **Promoção:** campo "Preço promocional"; a loja mostra o preço normal riscado. Só vale se for menor que o normal.
 - **Esgotados:** somem da vitrine e voltam quando o estoque é reposto.
