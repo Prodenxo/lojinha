@@ -233,7 +233,18 @@ export default function AdminPage() {
       {message && <p className="text-sm text-muted">{message}</p>}
 
       {draft && (
-        <div className="grid gap-3 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-2">
+        // Janela sobre a página: aparece onde quer que a lista esteja rolada.
+        <div
+          className="fixed inset-0 z-20 flex items-start justify-center overflow-y-auto bg-black/70 p-4"
+          onClick={() => setDraft(null)}
+        >
+        <div
+          className="my-8 grid w-full max-w-2xl gap-3 rounded-2xl border border-border bg-surface p-5 sm:grid-cols-2"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-lg font-semibold sm:col-span-2">
+            {draft.id ? "Editar produto" : "Novo produto"}
+          </h2>
           <label className="text-sm sm:col-span-2">
             Nome
             <input className={input} value={draft.name} onChange={(e) => set({ name: e.target.value })} />
@@ -282,6 +293,7 @@ export default function AdminPage() {
               Salvar
             </button>
           </div>
+        </div>
         </div>
       )}
 
