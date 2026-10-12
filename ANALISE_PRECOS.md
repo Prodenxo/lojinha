@@ -23,7 +23,7 @@ Feita em 12/10/2026 sobre o catálogo do fornecedor naquele momento (86 produtos
    | R$ 120 a 400 | 1,6× |
    | acima de R$ 400 | 1,35× |
 
-2. Âncora no valor: o preço nunca fica abaixo de 15% do oficial, mesmo que o custo seja de centavos.
+2. Âncora no valor: o preço nunca fica abaixo de 8% do oficial, mesmo que o custo seja de centavos.
 3. Teto de 45% do preço oficial: acima disso o cliente tende a preferir assinar direto.
 4. Piso de custo × 1,3 + R$ 2 e preço mínimo de R$ 12,90.
 5. Arredondamento para final ,90.
@@ -36,46 +36,46 @@ Resumo: Ótimo: 41; Bom: 4; Margem apertada: 1; Não vale: 5; Sem referência: 5
 
 | Produto | Custo | Oficial | Hoje na loja | Sugerido | Lucro | % do oficial | Avaliação |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Intercom Advanced 12m | 83,20 | 5.304,00 | 176,00 | **799,90** | 716,70 | 15% | Ótimo |
-| Arize Pro 12m | 39,00 | 3.120,00 | 82,50 | **469,90** | 430,90 | 15% | Ótimo |
-| Framer Pro 12 months | 32,50 | 1.872,00 | 68,75 | **289,90** | 257,40 | 15% | Ótimo |
-| Link to Receive Gemini Pro 18 Months | 4,68 | 1.500,00 | 9,90 | **229,90** | 225,22 | 15% | Ótimo |
+| Intercom Advanced 12m | 83,20 | 5.304,00 | 176,00 | **429,90** | 346,70 | 8% | Ótimo |
+| Arize Pro 12m | 39,00 | 3.120,00 | 82,50 | **249,90** | 210,90 | 8% | Ótimo |
 | ElevenLabs Creator 12m | 324,48 | 1.144,00 | 686,40 | **519,90** | 195,42 | 45% | Ótimo |
 | Runway Pro 12m | 308,88 | 1.747,00 | 653,40 | **499,90** | 191,02 | 29% | Ótimo |
 | Factory Pro 12 months | 390,00 | 1.248,00 | 825,00 | **569,90** | 179,90 | 46% | Ótimo |
 | Gamma Pro 12m | 260,00 | 936,00 | 550,00 | **419,90** | 159,90 | 45% | Ótimo |
-| Descript Creator 12m | 74,88 | 1.498,00 | 158,40 | **229,90** | 155,02 | 15% | Ótimo |
-| Airtable Team 12m | 39,00 | 1.248,00 | 82,50 | **189,90** | 150,90 | 15% | Ótimo |
 | Manus Pro 12 Months | 234,00 | 2.434,00 | 495,00 | **379,90** | 145,90 | 16% | Ótimo |
 | Lovable Pro 12m | 236,60 | 1.300,00 | 500,50 | **379,90** | 143,30 | 29% | Ótimo |
-| Microsoft 365 Premium 12M | 12,17 | 1.000,00 | 25,74 | **149,90** | 137,73 | 15% | Ótimo |
-| N8N Starter 12m | 93,60 | 1.452,00 | 198,00 | **219,90** | 126,30 | 15% | Ótimo |
 | Replit Core 12 months | 182,00 | 1.248,00 | 385,00 | **299,90** | 117,90 | 24% | Ótimo |
+| Framer Pro 12 months | 32,50 | 1.872,00 | 68,75 | **149,90** | 117,40 | 8% | Ótimo |
 | Microsoft 365 Family 5 user 12M | 112,53 | 599,00 | 238,04 | **229,90** | 117,37 | 38% | Ótimo |
-| Magic Patterns Starter 12m | 65,00 | 1.186,00 | 137,50 | **179,90** | 114,90 | 15% | Ótimo |
-| Notion Business 12m | 78,00 | 1.248,00 | 165,00 | **189,90** | 111,90 | 15% | Ótimo |
-| ChatPRD Pro 12 months | 31,20 | 931,00 | 66,00 | **139,90** | 108,70 | 15% | Ótimo |
-| Granola Business 12 months | 31,20 | 874,00 | 66,00 | **139,90** | 108,70 | 16% | Ótimo |
-| Figma PRO- EDU 1-2 year | 46,02 | 998,00 | 97,35 | **149,90** | 103,88 | 15% | Ótimo |
-| Canva Business + Leonardo AI 12m (NW) | 50,70 | 914,00 | 107,25 | **139,90** | 89,20 | 15% | Ótimo |
-| Linear Business 12m | 53,30 | 874,00 | 112,75 | **139,90** | 86,60 | 16% | Ótimo |
+| Link to Receive Gemini Pro 18 Months | 4,68 | 1.500,00 | 9,90 | **119,90** | 115,22 | 8% | Ótimo |
+| N8N Starter 12m | 93,60 | 1.452,00 | 198,00 | **189,90** | 96,30 | 13% | Ótimo |
+| Notion Business 12m | 78,00 | 1.248,00 | 165,00 | **159,90** | 81,90 | 13% | Ótimo |
 | Wispr Flow Pro 12m NW | 78,00 | 749,00 | 165,00 | **159,90** | 81,90 | 21% | Ótimo |
 | Jam Team 10 Seat 12m | 130,00 | 749,00 | 275,00 | **209,90** | 79,90 | 28% | Ótimo |
 | Wispr Flow 12m FW | 130,00 | 749,00 | 275,00 | **209,90** | 79,90 | 28% | Ótimo |
 | Bolt.new Pro 12m | 121,68 | 1.248,00 | 257,40 | **199,90** | 78,22 | 16% | Ótimo |
-| Adobe Express 12m | 4,94 | 520,00 | 10,45 | **78,90** | 73,96 | 15% | Ótimo |
-| Microsoft 365 Personal 12M | 10,92 | 489,00 | 23,10 | **73,90** | 62,98 | 15% | Ótimo |
+| Descript Creator 12m | 74,88 | 1.498,00 | 158,40 | **149,90** | 75,02 | 10% | Ótimo |
+| Airtable Team 12m | 39,00 | 1.248,00 | 82,50 | **109,90** | 70,90 | 9% | Ótimo |
+| Microsoft 365 Premium 12M | 12,17 | 1.000,00 | 25,74 | **80,90** | 68,73 | 8% | Ótimo |
+| Magic Patterns Starter 12m | 65,00 | 1.186,00 | 137,50 | **129,90** | 64,90 | 11% | Ótimo |
+| Canva Business + Leonardo AI 12m (NW) | 50,70 | 914,00 | 107,25 | **109,90** | 59,20 | 12% | Ótimo |
+| Linear Business 12m | 53,30 | 874,00 | 112,75 | **109,90** | 56,60 | 13% | Ótimo |
 | Mobbin 10x Seat 12m | 54,60 | 624,00 | 115,50 | **109,90** | 55,30 | 18% | Ótimo |
+| ChatPRD Pro 12 months | 31,20 | 931,00 | 66,00 | **81,90** | 50,70 | 9% | Ótimo |
+| Granola Business 12 months | 31,20 | 874,00 | 66,00 | **81,90** | 50,70 | 9% | Ótimo |
 | Crunchyroll Mega Fan 12M | 71,50 | 250,00 | 151,25 | **119,90** | 48,40 | 48% | Ótimo |
 | Railway Hobby 12m | 46,80 | 312,00 | 99,00 | **93,90** | 47,10 | 30% | Ótimo |
-| Notion Business - 3M | 15,60 | 374,00 | 33,00 | **56,90** | 41,30 | 15% | Ótimo |
+| Figma PRO- EDU 1-2 year | 46,02 | 998,00 | 97,35 | **92,90** | 46,88 | 9% | Ótimo |
+| Notion Business - 3M | 15,60 | 374,00 | 33,00 | **54,90** | 39,30 | 15% | Ótimo |
 | Manus Pro 1M | 22,78 | 203,00 | 48,18 | **59,90** | 37,12 | 30% | Ótimo |
-| iLovePDF Premium 12M | 5,20 | 250,00 | 11,00 | **37,90** | 32,70 | 15% | Ótimo |
-| Duolingo Super 12m | 5,30 | 240,00 | 11,22 | **36,90** | 31,60 | 15% | Ótimo |
+| Adobe Express 12m | 4,94 | 520,00 | 10,45 | **41,90** | 36,96 | 8% | Ótimo |
 | Amazon Prime Video 6M | 19,50 | 119,00 | 41,25 | **50,90** | 31,40 | 43% | Ótimo |
 | Nord VPN 3M activation Link | 18,20 | 203,00 | 38,50 | **47,90** | 29,70 | 24% | Ótimo |
-| Adobe Express 4M | 5,25 | 208,00 | 11,11 | **31,90** | 26,65 | 15% | Ótimo |
+| Microsoft 365 Personal 12M | 10,92 | 489,00 | 23,10 | **39,90** | 28,98 | 8% | Ótimo |
 | Proton Unlimited 1 Month | 5,98 | 68,00 | 12,65 | **29,90** | 23,92 | 44% | Ótimo |
+| iLovePDF Premium 12M | 5,20 | 250,00 | 11,00 | **26,90** | 21,70 | 11% | Ótimo |
+| Adobe Express 4M | 5,25 | 208,00 | 11,11 | **26,90** | 21,65 | 13% | Ótimo |
+| Duolingo Super 12m | 5,30 | 240,00 | 11,22 | **26,90** | 21,60 | 11% | Ótimo |
 | SPOTIFY PREMIUM 3M | 11,96 | 72,00 | 25,30 | **32,90** | 20,94 | 46% | Ótimo |
 | Capcut Team 1M 1200 Credits | 13,21 | 66,00 | 27,94 | **29,90** | 16,69 | 45% | Bom |
 | YOUTUBE PREMIUM 3-MONTH REDEEM LINK | 20,28 | 81,00 | 42,90 | **36,90** | 16,62 | 46% | Bom |
@@ -97,9 +97,9 @@ Resumo: Ótimo: 41; Bom: 4; Margem apertada: 1; Não vale: 5; Sem referência: 5
 
 | Produto | Custo | Oficial | Hoje na loja | Sugerido | Lucro | % do oficial | Avaliação |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Gumloop Pro 12 months | 62,40 | 2.309,00 | 132,00 | **349,90** | 287,50 | 15% | Ótimo |
-| Coursera Premium Access – 1 Year | 15,60 | 1.500,00 | 33,00 | **229,90** | 214,30 | 15% | Ótimo |
+| Gumloop Pro 12 months | 62,40 | 2.309,00 | 132,00 | **189,90** | 127,50 | 8% | Ótimo |
 | Google AI Pro 12m | 101,40 | 1.000,00 | 214,50 | **209,90** | 108,50 | 21% | Ótimo |
+| Coursera Premium Access – 1 Year | 15,60 | 1.500,00 | 33,00 | **119,90** | 104,30 | 8% | Ótimo |
 | Manus pro 1m 4000 credits | 36,40 | 203,00 | 77,00 | **91,90** | 55,50 | 45% | Ótimo |
 | Linkedin Busines 2m | 16,64 | 250,00 | 35,20 | **43,90** | 27,26 | 18% | Ótimo |
 | Career 2m New User | 16,28 | 220,00 | 34,43 | **42,90** | 26,62 | 20% | Ótimo |
@@ -130,17 +130,17 @@ Resumo: Ótimo: 41; Bom: 4; Margem apertada: 1; Não vale: 5; Sem referência: 5
 
 ## O que os números mostram
 
-- **Os baratos estavam muito subprecificados.** O Gemini Pro 18 meses custa R$ 4,68 e está a R$ 9,90 na loja, para um plano que vale cerca de R$ 1.500 no oficial; a 15% do oficial ele vai a R$ 229,90. O mesmo vale para Microsoft 365, Adobe Express, Duolingo e iLovePDF.
+- **Os baratos estavam muito subprecificados.** O Gemini Pro 18 meses custa R$ 4,68 e está a R$ 9,90 na loja, para um plano que vale cerca de R$ 1.500 no oficial; a 8% do oficial ele vai a R$ 119,90. O mesmo vale para Microsoft 365, Adobe Express, Duolingo e iLovePDF.
 - **Alguns estão caros demais.** YouTube 3 meses (R$ 42,90 contra R$ 81 no oficial), CapCut e Crunchyroll Fan estão acima de metade do oficial; a sugestão baixa o preço.
 - **Cinco não valem a pena:** ChatGPT Plus, ChatGPT Go, os dois Telegram Premium e o Disney. O custo já é quase o preço oficial, então qualquer margem deixa o produto mais caro que assinar direto. Melhor ocultar.
-- **O lucro por venda está nas assinaturas longas:** Gemini 18 meses, Framer, Descript, Airtable, Notion, Replit, Lovable, Runway e ElevenLabs rendem de R$ 100 a R$ 250 por unidade.
+- **O lucro por venda está nas assinaturas longas:** Gemini 18 meses, Framer, Descript, Airtable, Notion, Replit, Lovable, Runway e ElevenLabs rendem de R$ 80 a R$ 200 por unidade.
 - **Volume tende a vir do consumo** (Spotify, YouTube, Prime Video, Duolingo): lucro de R$ 17 a R$ 32 por venda.
 ## Limitações
 
 - Os preços oficiais são referência, não cotação: confira os dos produtos que você pretende destacar.
 - Não pesquisei quanto outras lojas do mesmo tipo cobram. Esse é o preço que o cliente realmente compara, e pode puxar os valores para baixo.
-- Os 15% do oficial são uma escolha minha, não um dado de mercado. Se outras lojas venderem o mesmo produto por menos, esse piso fica alto; ajuste o percentual ou o preço do produto.
-- Microsoft 365 Personal aparece no varejo por cerca de R$ 100 ao ano em promoção, então o sugerido de R$ 73,90 fica perto disso.
+- Os 8% do oficial foram calibrados pelo Gemini 18 meses a cerca de R$ 120; não são um dado de mercado. Se outras lojas venderem o mesmo produto por menos, esse piso fica alto; ajuste o percentual ou o preço do produto.
+- Microsoft 365 Personal aparece no varejo por cerca de R$ 100 ao ano em promoção, então o sugerido fica bem abaixo disso.
 - Intercom e Arize são planos de empresa com preço oficial alto; o sugerido deles saiu inflado por isso.
 - Itens marcados como "valor incerto" ou "equivalência incerta" na tabela abaixo têm referência fraca.
 
