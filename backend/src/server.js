@@ -29,7 +29,11 @@ app.use((err, _req, res, _next) => {
 });
 
 const port = Number(process.env.PORT ?? 4000);
-app.listen(port, () => console.log(`Backend em http://localhost:${port}`));
+app.listen(port, () => {
+  console.log(`Backend em http://localhost:${port}`);
+  const { DB_USER, DB_HOST = "localhost", DB_PORT = 3306, DB_NAME } = process.env;
+  console.log(`MySQL configurado: ${DB_USER}@${DB_HOST}:${DB_PORT}/${DB_NAME}`);
+});
 
 // Cria as tabelas na subida; se o banco ainda não estiver no ar, só avisa.
 migrate().catch((err) => console.error("Falha ao aplicar schema:", err.code ?? err.message));
