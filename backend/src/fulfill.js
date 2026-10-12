@@ -1,4 +1,5 @@
 import { pool } from "./db.js";
+import { sendDeliveredEmail } from "./mail.js";
 import { createSupplierOrder } from "./partner.js";
 
 const MAX_ATTEMPTS = 30;
@@ -40,7 +41,7 @@ export async function fulfillOrder(orderId) {
   if (!lock.affectedRows) return;
 
   const [rows] = await pool.query(
-    `SELECT o.id, o.code, o.amount_cents, p.partner_id, p.cost_usd
+    `SELECT o.id, o.code, o.amount_cents, o.customer_email, o.product_name, p.partner_id, p.cost_usd
      FROM orders o LEFT JOIN products p ON p.id = o.product_id WHERE o.id = ?`,
     [orderId],
   );
@@ -80,6 +81,7 @@ export async function fulfillOrder(orderId) {
     [delivery, response.orderCode ?? null, response.totalCharged ?? null, orderId],
   );
   console.log(`Pedido ${order.code} entregue (fornecedor ${response.orderCode}).`);
+  await sendDeliveredEmail(order);
 }
 
 // Tenta de novo os pedidos pagos que ainda não foram entregues.

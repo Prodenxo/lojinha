@@ -3,6 +3,7 @@ import { Router } from "express";
 import { pool } from "./db.js";
 import { fulfillOrder } from "./fulfill.js";
 import { checkPayment, createCheckoutLink } from "./infinitepay.js";
+import { mailConfigured, sendAccessEmail, sendDeliveredEmail, sendPaidEmail } from "./mail.js";
 import { requireAdmin, wrap } from "./products.js";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -12,6 +13,14 @@ function normalizePhone(raw) {
   let digits = String(raw ?? "").replace(/\D/g, "");
   if (digits.length === 10 || digits.length === 11) digits = `55${digits}`;
   return digits.length === 12 || digits.length === 13 ? `+${digits}` : null;
+}
+
+// Tenta a entrega automática; se não sair na hora, avisa o cliente que o pagamento entrou.
+// (Quando sai, quem avisa é o e-mail de entrega.)
+async function afterPaid(order) {
+  if (process.env.AUTO_DELIVERY !== "0") await fulfillOrder(order.id);
+  const [rows] = await pool.query("SELECT status FROM orders WHERE id = ?", [order.id]);
+  if (rows[0]?.status !== "delivered") await sendPaidEmail(order);
 }
 
 // Confere o pagamento na InfinitePay e, se estiver pago, marca o pedido.
@@ -25,16 +34,16 @@ async function confirmPayment(code, { transactionNsu, slug, receiptUrl }) {
   const check = await checkPayment({ code, transactionNsu, slug });
   if (!check.paid || Number(check.amount) < order.amount_cents) return "unpaid";
 
-  await pool.query(
+  const [paid] = await pool.query(
     `UPDATE orders SET status = 'paid', paid_at = NOW(), transaction_nsu = ?, invoice_slug = ?,
        capture_method = ?, receipt_url = COALESCE(?, receipt_url)
      WHERE id = ? AND status = 'pending'`,
     [transactionNsu, slug, check.capture_method ?? null, receiptUrl ?? null, order.id],
   );
-  // Entrega em segundo plano, para responder rápido ao webhook da InfinitePay.
-  if (process.env.AUTO_DELIVERY !== "0") {
-    fulfillOrder(order.id).catch((err) => console.error("Entrega automática falhou:", err.message));
-  }
+  // Webhook e retorno do cliente podem chegar juntos: só o primeiro segue adiante.
+  if (!paid.affectedRows) return "already";
+  // Em segundo plano, para responder rápido ao webhook da InfinitePay.
+  afterPaid(order).catch((err) => console.error("Pós-pagamento falhou:", err.message));
   return "paid";
 }
 
@@ -124,6 +133,50 @@ ordersRouter.post(
   }),
 );
 
+// "Meus pedidos" sem senha: manda um link de acesso para o e-mail informado.
+ordersRouter.post(
+  "/my-orders/request",
+  wrap(async (req, res) => {
+    const email = String(req.body.email ?? "").trim().toLowerCase();
+    if (!EMAIL.test(email)) return res.status(400).json({ error: "Informe um e-mail válido" });
+    if (!mailConfigured()) return res.status(503).json({ error: "Envio de e-mail ainda não configurado" });
+
+    const [orders] = await pool.query("SELECT 1 FROM orders WHERE customer_email = ? LIMIT 1", [email]);
+    const [recent] = await pool.query(
+      "SELECT 1 FROM order_access WHERE email = ? AND created_at > NOW() - INTERVAL 1 MINUTE LIMIT 1",
+      [email],
+    );
+    if (orders.length && !recent.length) {
+      const token = randomBytes(24).toString("hex");
+      await pool.query(
+        "INSERT INTO order_access (token, email, expires_at) VALUES (?, ?, NOW() + INTERVAL 1 DAY)",
+        [token, email],
+      );
+      await sendAccessEmail(email, token);
+    }
+    // Mesma resposta exista ou não pedido, para não revelar quem é cliente.
+    res.json({ ok: true });
+  }),
+);
+
+ordersRouter.get(
+  "/my-orders",
+  wrap(async (req, res) => {
+    const [access] = await pool.query(
+      "SELECT email FROM order_access WHERE token = ? AND expires_at > NOW()",
+      [String(req.query.token ?? "")],
+    );
+    if (!access.length) return res.status(401).json({ error: "Link inválido ou vencido. Peça um novo." });
+    const [rows] = await pool.query(
+      `SELECT code, product_name, amount_cents, status, created_at FROM orders
+       WHERE customer_email = ? AND (status <> 'cancelled' OR paid_at IS NOT NULL)
+       ORDER BY created_at DESC LIMIT 100`,
+      [access[0].email],
+    );
+    res.json({ email: access[0].email, data: rows });
+  }),
+);
+
 // Aviso de pagamento aprovado. 400 faz a InfinitePay tentar de novo.
 ordersRouter.post(
   "/webhooks/infinitepay",
@@ -172,12 +225,15 @@ adminOrdersRouter.put(
   wrap(async (req, res) => {
     const delivery = String(req.body.delivery ?? "").trim();
     if (!delivery) return res.status(400).json({ error: "Informe o conteúdo da entrega" });
+    const [before] = await pool.query("SELECT * FROM orders WHERE id = ?", [req.params.id]);
     const [result] = await pool.query(
       `UPDATE orders SET delivery = ?, status = 'delivered', delivered_at = COALESCE(delivered_at, NOW())
        WHERE id = ? AND status IN ('paid', 'delivered')`,
       [delivery, req.params.id],
     );
     if (!result.affectedRows) return res.status(409).json({ error: "Pedido não está pago" });
+    // Só avisa na primeira entrega, não a cada correção do texto.
+    if (before[0]?.status === "paid") await sendDeliveredEmail(before[0]);
     res.json({ ok: true });
   }),
 );

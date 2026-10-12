@@ -42,3 +42,11 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_orders_status (status, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS order_access (
+  token      VARCHAR(64) PRIMARY KEY,
+  email      VARCHAR(255) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_order_access_email (email, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

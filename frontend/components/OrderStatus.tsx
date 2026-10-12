@@ -131,7 +131,8 @@ export function OrderStatus() {
       )}
 
       <p className="text-center text-xs text-muted">
-        Guarde o endereço desta página: é por ele que você consulta o pedido.
+        Para voltar aqui depois, guarde o endereço desta página ou use &quot;Meus pedidos&quot; com o
+        e-mail da compra.
       </p>
     </div>
   );

@@ -35,6 +35,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Lojinha do <span className="text-accent-strong">Leonardo Mohammed</span>
               </span>
             </Link>
+            <Link
+              href="/meus-pedidos"
+              className="ml-auto shrink-0 rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition hover:border-accent hover:text-foreground"
+            >
+              Meus pedidos
+            </Link>
           </div>
         </header>
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>

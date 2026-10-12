@@ -60,7 +60,7 @@ export function BuyForm({ slug }: { slug: string }) {
       {error && <p className="text-sm text-red-400">{error}</p>}
       <p className="text-xs text-muted">
         Pagamento por Pix ou cartão via InfinitePay. Depois de pagar, você acompanha a entrega na
-        página do pedido.
+        página do pedido e em &quot;Meus pedidos&quot;, com este e-mail.
       </p>
     </form>
   );

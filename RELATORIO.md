@@ -131,7 +131,7 @@ A InfinitePay não usa chave de API, só a InfiniteTag. O formato da resposta de
 - **`ADMIN_TOKEN`:** em produção ainda estava `troque-este-token` no último teste. Trocar; quem souber esse valor edita produtos e vê os pedidos.
 - **Chave do fornecedor:** foi exposta em conversa; vale gerar outra.
 - **Checkout sem teste real:** fazer uma compra de valor baixo antes de divulgar.
-- **Sem e-mail ao cliente:** ele só vê a entrega na página do pedido. Se fechar a página sem guardar o endereço, precisa falar com você.
+- **E-mail:** a loja avisa o cliente (pagamento aprovado e pedido entregue) e tem "Meus pedidos" sem senha, por link enviado ao e-mail. Só funciona depois de configurar `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` e `MAIL_FROM` no backend; sem isso nenhum e-mail sai. O e-mail de entrega leva só o link do pedido, não o login e a senha. Não testado com envio real.
 - **Entrega automática sem teste real:** o caminho de sucesso só será exercitado na primeira compra com saldo no fornecedor.
 - **Saldo no fornecedor:** US$ 0,30, insuficiente para comprar qualquer produto.
 - **Natureza dos produtos:** contas e assinaturas de terceiros revendidas costumam violar os termos dessas empresas e podem ser canceladas; quem responde ao cliente é você. Vale ter política de garantia e reembolso.
