@@ -19,7 +19,7 @@ type AdminOrder = {
 
 const STATUS_LABEL: Record<AdminOrder["status"], string> = {
   pending: "Aguardando pagamento",
-  paid: "Pago — falta entregar",
+  paid: "Pago, falta entregar",
   delivered: "Entregue",
   cancelled: "Cancelado",
 };

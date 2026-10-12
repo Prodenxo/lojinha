@@ -247,7 +247,7 @@ export default function AdminPage() {
             <input className={input} inputMode="decimal" value={draft.price_brl} onChange={(e) => set({ price_brl: e.target.value })} />
           </label>
           <label className="text-sm">
-            Preço promocional (R$) — opcional
+            Preço promocional (R$), opcional
             <input className={input} inputMode="decimal" value={draft.promo_price_brl} onChange={(e) => set({ promo_price_brl: e.target.value })} />
           </label>
           <label className="text-sm">
@@ -313,7 +313,7 @@ export default function AdminPage() {
                   {!p.partner_id && <span className="ml-2 text-xs text-accent">manual</span>}
                 </td>
                 <td className="p-3">{p.category}</td>
-                <td className="p-3">{p.cost_usd != null ? `US$ ${p.cost_usd.toFixed(2)}` : "—"}</td>
+                <td className="p-3">{p.cost_usd != null ? `US$ ${p.cost_usd.toFixed(2)}` : "-"}</td>
                 <td className="p-3 whitespace-nowrap">
                   {formatBRL(p.price_brl)}
                   {p.promo_price_brl != null && (

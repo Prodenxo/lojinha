@@ -48,6 +48,16 @@ export function brandName(product: Pick<Product, "name" | "category">) {
   return product.category in GROUP_LABELS ? product.name.split(/\s+/)[0] : product.category;
 }
 
+// Combos ("Canva Business + Leonardo AI") mostram todas as marcas do nome,
+// desde que cada uma tenha logo; senão vale a marca da categoria.
+export function productBrands(product: Pick<Product, "name" | "category">) {
+  if (product.name.includes(" + ")) {
+    const brands = product.name.split(" + ").map((part) => part.trim().split(/\s+/)[0]);
+    if (brands.every((brand) => brandLogo(brand))) return brands;
+  }
+  return [brandName(product)];
+}
+
 export function brandColor(brand: string) {
   const known = COLORS[brand.toLowerCase()];
   if (known) return known;
