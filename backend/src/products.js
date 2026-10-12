@@ -28,7 +28,8 @@ export const publicRouter = Router();
 publicRouter.get(
   "/products",
   wrap(async (req, res) => {
-    const where = ["active = 1"];
+    // Esgotados ficam fora da vitrine e voltam sozinhos quando o estoque é reposto.
+    const where = ["active = 1", "stock > 0"];
     const params = [];
     if (req.query.category) {
       where.push("category = ?");
@@ -40,7 +41,7 @@ publicRouter.get(
     }
     const [rows] = await pool.query(
       `SELECT ${PUBLIC_FIELDS} FROM products WHERE ${where.join(" AND ")}
-       ORDER BY (stock > 0) DESC, featured DESC, category, name`,
+       ORDER BY featured DESC, category, name`,
       params,
     );
     res.json({ data: rows.map(parseImages) });
@@ -63,7 +64,7 @@ publicRouter.get(
   "/categories",
   wrap(async (_req, res) => {
     const [rows] = await pool.query(
-      "SELECT category AS name, COUNT(*) AS total FROM products WHERE active = 1 GROUP BY category ORDER BY category",
+      "SELECT category AS name, COUNT(*) AS total FROM products WHERE active = 1 AND stock > 0 GROUP BY category ORDER BY category",
     );
     res.json({ data: rows });
   }),

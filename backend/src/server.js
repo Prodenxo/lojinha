@@ -3,6 +3,7 @@ import express from "express";
 import { pool } from "./db.js";
 import { migrate } from "./migrate.js";
 import { adminRouter, publicRouter } from "./products.js";
+import { syncCatalog } from "./sync.js";
 
 const app = express();
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN?.split(",") ?? true }));
@@ -35,5 +36,18 @@ app.listen(port, () => {
   console.log(`MySQL configurado: ${DB_USER}@${DB_HOST}:${DB_PORT}/${DB_NAME}`);
 });
 
-// Cria as tabelas na subida; se o banco ainda não estiver no ar, só avisa.
-migrate().catch((err) => console.error("Falha ao aplicar schema:", err.code ?? err.message));
+const autoSync = () =>
+  syncCatalog()
+    .then((result) => console.log("Sincronização automática:", result))
+    .catch((err) => console.error("Sincronização automática falhou:", err.code ?? err.message));
+
+// Cria as tabelas na subida e mantém o estoque em dia com o fornecedor.
+migrate()
+  .then(() => {
+    const minutes = Number(process.env.SYNC_INTERVAL_MINUTES ?? 30);
+    if (minutes > 0) {
+      autoSync();
+      setInterval(autoSync, minutes * 60_000);
+    }
+  })
+  .catch((err) => console.error("Falha ao aplicar schema:", err.code ?? err.message));
