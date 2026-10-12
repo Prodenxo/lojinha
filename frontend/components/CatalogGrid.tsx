@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Product } from "@/lib/api";
+import { categoryLabel } from "@/lib/brands";
 import { durationLabel, formatBRL } from "@/lib/format";
 import { ProductVisual } from "./ProductVisual";
 
@@ -38,13 +39,13 @@ export function CatalogGrid({ products }: { products: Product[] }) {
         className="w-full rounded-xl border border-border bg-surface px-4 py-3 outline-none placeholder:text-muted focus:border-accent"
       />
 
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+      <div className="flex flex-wrap gap-2">
         <button className={chip(category === null)} onClick={() => setCategory(null)}>
           Todos
         </button>
         {categories.map((name) => (
           <button key={name} className={chip(category === name)} onClick={() => setCategory(name)}>
-            {name}
+            {categoryLabel(name)}
           </button>
         ))}
       </div>

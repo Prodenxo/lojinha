@@ -1,13 +1,13 @@
 import type { Product } from "@/lib/api";
-import { categoryHue } from "@/lib/format";
+import { brandColor, brandName } from "@/lib/brands";
 
 type Props = {
-  product: Pick<Product, "name" | "category" | "emoji">;
+  product: Pick<Product, "name" | "category">;
   image?: string;
   className?: string;
 };
 
-// Foto do produto; sem foto cadastrada, um bloco colorido com a marca.
+// Foto do produto; sem foto cadastrada, um bloco na cor da marca.
 export function ProductVisual({ product, image, className = "" }: Props) {
   if (image) {
     return (
@@ -15,16 +15,24 @@ export function ProductVisual({ product, image, className = "" }: Props) {
       <img src={image} alt={product.name} className={`object-cover ${className}`} />
     );
   }
-  const hue = categoryHue(product.category);
+  const brand = brandName(product);
+  const color = brandColor(brand);
   return (
     <div
-      className={`flex flex-col items-center justify-center gap-2 ${className}`}
+      className={`relative flex items-center justify-center overflow-hidden ${className}`}
       style={{
-        background: `linear-gradient(135deg, hsl(${hue} 45% 22%), hsl(${(hue + 40) % 360} 50% 12%))`,
+        background: `linear-gradient(140deg, ${color}, color-mix(in srgb, ${color} 30%, #060a08))`,
       }}
     >
-      <span className="text-4xl">{product.emoji ?? product.category.charAt(0)}</span>
-      <span className="px-3 text-center text-sm font-medium text-white/80">{product.category}</span>
+      <span
+        aria-hidden
+        className="absolute -bottom-8 -right-2 select-none text-[9rem] font-black leading-none text-white/10"
+      >
+        {brand.charAt(0).toUpperCase()}
+      </span>
+      <span className="relative px-3 text-center text-xl font-bold tracking-tight text-white drop-shadow-sm">
+        {brand}
+      </span>
     </div>
   );
 }

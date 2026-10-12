@@ -214,13 +214,9 @@ export default function AdminPage() {
             Nome
             <input className={input} value={draft.name} onChange={(e) => set({ name: e.target.value })} />
           </label>
-          <label className="text-sm">
+          <label className="text-sm sm:col-span-2">
             Categoria
             <input className={input} value={draft.category} onChange={(e) => set({ category: e.target.value })} />
-          </label>
-          <label className="text-sm">
-            Emoji
-            <input className={input} value={draft.emoji} onChange={(e) => set({ emoji: e.target.value })} />
           </label>
           <label className="text-sm">
             Preço (R$)

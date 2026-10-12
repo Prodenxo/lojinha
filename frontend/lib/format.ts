@@ -22,10 +22,3 @@ const DELIVERY: Record<string, string> = {
 };
 
 export const deliveryLabel = (type: string | null) => (type ? (DELIVERY[type] ?? type) : null);
-
-// Cor estável por categoria, para os cards sem foto.
-export function categoryHue(category: string) {
-  let hash = 0;
-  for (const char of category) hash = (hash * 31 + char.charCodeAt(0)) % 360;
-  return hash;
-}

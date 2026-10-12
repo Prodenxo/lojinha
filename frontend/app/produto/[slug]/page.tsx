@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductVisual } from "@/components/ProductVisual";
 import { getProduct } from "@/lib/api";
+import { categoryLabel } from "@/lib/brands";
 import { deliveryLabel, durationLabel, formatBRL } from "@/lib/format";
 
 type Params = Promise<{ slug: string }>;
@@ -20,7 +21,7 @@ async function ProductDetail({ params }: { params: Params }) {
   const facts = [
     ["Duração", durationLabel(product.duration_days)],
     ["Entrega", deliveryLabel(product.delivery_type)],
-    ["Categoria", product.category],
+    ["Categoria", categoryLabel(product.category)],
   ].filter(([, value]) => value);
 
   return (
