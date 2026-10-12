@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import { pool } from "./db.js";
+import { fulfillPending } from "./fulfill.js";
 import { migrate } from "./migrate.js";
 import { adminOrdersRouter, ordersRouter } from "./orders.js";
 import { adminRouter, publicRouter } from "./products.js";
@@ -52,5 +53,7 @@ migrate()
       autoSync();
       setInterval(autoSync, minutes * 60_000);
     }
+    // Reentrega: pedidos pagos que falharam (saldo, estoque) são tentados de novo.
+    setInterval(() => fulfillPending().catch((err) => console.error(err.message)), 2 * 60_000);
   })
   .catch((err) => console.error("Falha ao aplicar schema:", err.code ?? err.message));

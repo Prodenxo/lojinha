@@ -17,7 +17,7 @@ Atualizado em 12/10/2026. Cobre tudo o que foi feito: conexão com o fornecedor,
 | Logos, destaque e promoção | Enviados ao GitHub | Vitrine testada com backend simulado; colunas novas do banco ainda não rodaram em produção |
 | Esgotados ocultos e sincronização a cada 30 min | Enviados ao GitHub | Só checagem de sintaxe; não rodou contra o banco |
 | Checkout com InfinitePay | Enviado ao GitHub, **não testado de ponta a ponta** | Build e lint passam; falta a InfiniteTag para gerar um pagamento real |
-| Entrega automática pelo fornecedor | **Não feita** | Falta a documentação de `POST /orders` |
+| Entrega automática pelo fornecedor | Enviada ao GitHub, **sem teste de compra real** | Formatação testada com os exemplos da documentação; recusa por saldo insuficiente testada de verdade no fornecedor |
 
 ## 2. Arquitetura
 
@@ -103,7 +103,10 @@ Fluxo:
 2. O backend grava o pedido e pede um link de pagamento à InfinitePay.
 3. O cliente paga por Pix ou cartão na página da InfinitePay e volta para `/pedido/<código>`.
 4. O backend confere o pagamento direto na InfinitePay (no retorno do cliente e no webhook) e marca o pedido como pago. O valor pago precisa cobrir o valor do pedido.
-5. O pedido pago aparece em `/admin/pedidos`. Você cola a conta, o link ou o código e clica em "Entregar ao cliente".
+5. O backend compra o produto no fornecedor (`POST /orders`, identificado por `loja-<código>` para nunca cobrar duas vezes) e grava o link, o código ou a conta que ele devolver.
+   - Se falhar (saldo, estoque, fornecedor fora do ar), tenta de novo a cada 2 minutos, até 30 vezes, e o motivo aparece em `/admin/pedidos` com o botão "Tentar de novo".
+   - Não compra se o custo do fornecedor for maior que o valor pago, nem para produto cadastrado à mão; nesses casos a entrega é manual pelo admin.
+   - `AUTO_DELIVERY=0` no backend desliga a compra automática.
 6. A entrega aparece na página do pedido do cliente.
 
 O que falta para funcionar:
@@ -122,7 +125,6 @@ A InfinitePay não usa chave de API, só a InfiniteTag. O formato da resposta de
 | Página de detalhe em vez de modal | Dá link direto para compartilhar |
 | Compra sem cadastro, com e-mail e WhatsApp | Menos atrito; o link do pedido serve de comprovante |
 | Uma unidade por pedido | Simplicidade na primeira versão |
-| Entrega manual pelo admin | A rota de pedidos do fornecedor não está documentada |
 
 ## 10. Pendências e riscos
 
@@ -130,7 +132,7 @@ A InfinitePay não usa chave de API, só a InfiniteTag. O formato da resposta de
 - **Chave do fornecedor:** foi exposta em conversa; vale gerar outra.
 - **Checkout sem teste real:** fazer uma compra de valor baixo antes de divulgar.
 - **Sem e-mail ao cliente:** ele só vê a entrega na página do pedido. Se fechar a página sem guardar o endereço, precisa falar com você.
-- **Entrega automática:** depende da documentação de `POST /orders` do fornecedor e de saldo lá.
+- **Entrega automática sem teste real:** o caminho de sucesso só será exercitado na primeira compra com saldo no fornecedor.
 - **Saldo no fornecedor:** US$ 0,30, insuficiente para comprar qualquer produto.
 - **Natureza dos produtos:** contas e assinaturas de terceiros revendidas costumam violar os termos dessas empresas e podem ser canceladas; quem responde ao cliente é você. Vale ter política de garantia e reembolso.
 - **Logos:** são marcas de terceiros, usadas para identificar o produto.

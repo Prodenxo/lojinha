@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { Router } from "express";
 import { pool } from "./db.js";
+import { fulfillOrder } from "./fulfill.js";
 import { checkPayment, createCheckoutLink } from "./infinitepay.js";
 import { requireAdmin, wrap } from "./products.js";
 
@@ -30,6 +31,10 @@ async function confirmPayment(code, { transactionNsu, slug, receiptUrl }) {
      WHERE id = ? AND status = 'pending'`,
     [transactionNsu, slug, check.capture_method ?? null, receiptUrl ?? null, order.id],
   );
+  // Entrega em segundo plano, para responder rápido ao webhook da InfinitePay.
+  if (process.env.AUTO_DELIVERY !== "0") {
+    fulfillOrder(order.id).catch((err) => console.error("Entrega automática falhou:", err.message));
+  }
   return "paid";
 }
 
@@ -143,6 +148,21 @@ adminOrdersRouter.get(
       "SELECT * FROM orders WHERE status <> 'cancelled' OR paid_at IS NOT NULL ORDER BY created_at DESC LIMIT 200",
     );
     res.json({ data: rows });
+  }),
+);
+
+// Zera as tentativas e tenta a entrega automática de novo (ex.: depois de pôr saldo).
+adminOrdersRouter.post(
+  "/orders/:id/retry",
+  wrap(async (req, res) => {
+    await pool.query(
+      "UPDATE orders SET fulfill_attempts = 0, fulfilling_at = NULL WHERE id = ? AND status = 'paid'",
+      [req.params.id],
+    );
+    await fulfillOrder(req.params.id);
+    const [rows] = await pool.query("SELECT status, fulfill_error FROM orders WHERE id = ?", [req.params.id]);
+    if (!rows.length) return res.status(404).json({ error: "Pedido não encontrado" });
+    res.json(rows[0]);
   }),
 );
 

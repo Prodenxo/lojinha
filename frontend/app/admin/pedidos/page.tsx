@@ -14,6 +14,9 @@ type AdminOrder = {
   status: "pending" | "paid" | "delivered" | "cancelled";
   capture_method: string | null;
   delivery: string | null;
+  fulfill_error: string | null;
+  supplier_order_code: string | null;
+  supplier_cost_usd: number | null;
   created_at: string;
 };
 
@@ -31,6 +34,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<AdminOrder[] | null>(null);
   const [drafts, setDrafts] = useState<Record<number, string>>({});
   const [message, setMessage] = useState("");
+  const [balance, setBalance] = useState<string | null>(null);
 
   const call = useCallback(async (path: string, init: RequestInit = {}) => {
     const res = await fetch(`/api/admin/${path}`, {
@@ -48,6 +52,8 @@ export default function AdminOrdersPage() {
   const load = useCallback(async () => {
     try {
       setOrders((await call("orders")).data);
+      const usage = await call("partner/usage").catch(() => null);
+      if (usage) setBalance(usage.balance);
     } catch (err) {
       setMessage((err as Error).message);
     }
@@ -74,10 +80,28 @@ export default function AdminOrdersPage() {
     }
   }
 
+  async function retry(order: AdminOrder) {
+    setMessage("Tentando a entrega automática...");
+    try {
+      const result = await call(`orders/${order.id}/retry`, { method: "POST" });
+      setMessage(
+        result.status === "delivered"
+          ? `Pedido ${order.code.slice(0, 8).toUpperCase()} entregue automaticamente.`
+          : `Não entregou: ${result.fulfill_error ?? "sem detalhe"}`,
+      );
+      await load();
+    } catch (err) {
+      setMessage((err as Error).message);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-3">
         <h1 className="mr-auto text-xl font-semibold">Pedidos</h1>
+        {balance !== null && (
+          <span className="text-sm text-muted">Saldo no fornecedor: US$ {balance}</span>
+        )}
         <Link href="/admin" className="rounded-lg border border-border px-3 py-2 text-sm hover:border-accent">
           Produtos
         </Link>
@@ -114,6 +138,20 @@ export default function AdminOrdersPage() {
               Ver página do cliente
             </Link>
           </div>
+          {order.supplier_order_code && (
+            <p className="text-xs text-muted">
+              Entrega automática: pedido {order.supplier_order_code} no fornecedor
+              {order.supplier_cost_usd != null && `, custo US$ ${order.supplier_cost_usd.toFixed(2)}`}
+            </p>
+          )}
+          {order.status === "paid" && order.fulfill_error && (
+            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-red-400/40 bg-red-400/10 p-3 text-sm">
+              <span className="mr-auto">Entrega automática não saiu: {order.fulfill_error}</span>
+              <button className="rounded-lg border border-border px-3 py-1 hover:border-accent" onClick={() => retry(order)}>
+                Tentar de novo
+              </button>
+            </div>
+          )}
           {(order.status === "paid" || order.status === "delivered") && (
             <>
               <textarea
