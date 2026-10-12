@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS products (
+  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  partner_id    INT UNSIGNED NULL UNIQUE,
+  slug          VARCHAR(160) NOT NULL UNIQUE,
+  name          VARCHAR(255) NOT NULL,
+  description   TEXT NULL,
+  category      VARCHAR(120) NOT NULL DEFAULT 'Outros',
+  emoji         VARCHAR(16) NULL,
+  delivery_type VARCHAR(40) NULL,
+  duration_days INT NULL,
+  cost_usd      DECIMAL(10,2) NULL,
+  price_brl     DECIMAL(10,2) NOT NULL DEFAULT 0,
+  price_locked  TINYINT(1) NOT NULL DEFAULT 0,
+  stock         INT NOT NULL DEFAULT 0,
+  images        JSON NULL,
+  active        TINYINT(1) NOT NULL DEFAULT 1,
+  synced_at     DATETIME NULL,
+  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_products_active_category (active, category)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

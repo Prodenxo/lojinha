@@ -1,0 +1,17 @@
+{
+  "name": "lojinha-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/server.js",
+    "start": "node src/server.js",
+    "migrate": "node --env-file=.env src/migrate.js",
+    "sync": "node --env-file=.env src/sync-cli.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mysql2": "^3.11.5"
+  }
+}
