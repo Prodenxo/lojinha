@@ -20,7 +20,7 @@ async function proxy(req: Request, ctx: { params: Promise<{ path: string[] }> })
       headers: { "content-type": "application/json" },
     });
   } catch {
-    return Response.json({ error: "Backend indisponível" }, { status: 502 });
+    return Response.json({ error: "Backend indisponível" }, { status: 503 });
   }
 }
 

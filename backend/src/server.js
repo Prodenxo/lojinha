@@ -27,7 +27,7 @@ app.use("/api/admin", adminOrdersRouter);
 app.use((err, _req, res, _next) => {
   console.error(err);
   if (err.message?.startsWith("Partner API") || err.message?.startsWith("InfinitePay")) {
-    return res.status(502).json({ error: "Fornecedor indisponível, tente novamente" });
+    return res.status(503).json({ error: "Serviço externo indisponível, tente novamente" });
   }
   res.status(500).json({ error: "Erro interno" });
 });

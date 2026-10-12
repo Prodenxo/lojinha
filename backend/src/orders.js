@@ -76,7 +76,11 @@ ordersRouter.post(
     } catch (err) {
       console.error(err);
       await pool.query("UPDATE orders SET status = 'cancelled' WHERE code = ?", [code]);
-      return res.status(502).json({ error: "Não foi possível gerar o pagamento. Tente novamente." });
+      // 503 e não 502: o proxy do Easypanel troca o corpo das respostas 502 pela página dele.
+      return res.status(503).json({
+        error: "Não foi possível gerar o pagamento. Tente novamente.",
+        detail: err.message,
+      });
     }
 
     await pool.query("UPDATE orders SET checkout_url = ? WHERE code = ?", [checkoutUrl, code]);
