@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { BuyForm } from "@/components/BuyForm";
 import { ProductVisual } from "@/components/ProductVisual";
 import { getProduct } from "@/lib/api";
 import { categoryLabel } from "@/lib/brands";
@@ -16,8 +17,8 @@ async function ProductDetail({ params }: { params: Params }) {
 
   const soldOut = product.stock <= 0;
   const whatsapp = process.env.WHATSAPP_NUMBER;
-  const buyUrl = whatsapp
-    ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(`Olá! Quero comprar: ${product.name}`)}`
+  const helpUrl = whatsapp
+    ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(`Olá! Tenho uma dúvida sobre: ${product.name}`)}`
     : null;
   const facts = [
     ["Duração", durationLabel(product.duration_days)],
@@ -70,19 +71,19 @@ async function ProductDetail({ params }: { params: Params }) {
           <span className="rounded-xl border border-border py-3 text-center text-muted">
             Esgotado no momento
           </span>
-        ) : buyUrl ? (
+        ) : (
+          <BuyForm slug={product.slug} />
+        )}
+
+        {helpUrl && (
           <a
-            href={buyUrl}
+            href={helpUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xl bg-accent py-3 text-center font-semibold text-black transition hover:bg-accent-strong"
+            className="text-center text-sm text-muted underline hover:text-foreground"
           >
-            Comprar pelo WhatsApp
+            Dúvidas? Fale com a gente no WhatsApp
           </a>
-        ) : (
-          <span className="rounded-xl border border-border py-3 text-center text-muted">
-            Compra online em breve
-          </span>
         )}
       </div>
     </div>

@@ -21,3 +21,24 @@ CREATE TABLE IF NOT EXISTS products (
   updated_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_products_active_category (active, category)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS orders (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code            VARCHAR(40) NOT NULL UNIQUE,
+  product_id      INT UNSIGNED NOT NULL,
+  product_name    VARCHAR(255) NOT NULL,
+  amount_cents    INT UNSIGNED NOT NULL,
+  customer_email  VARCHAR(255) NOT NULL,
+  customer_phone  VARCHAR(30) NOT NULL,
+  status          VARCHAR(20) NOT NULL DEFAULT 'pending',
+  checkout_url    VARCHAR(500) NULL,
+  transaction_nsu VARCHAR(100) NULL,
+  invoice_slug    VARCHAR(100) NULL,
+  capture_method  VARCHAR(30) NULL,
+  receipt_url     VARCHAR(500) NULL,
+  delivery        TEXT NULL,
+  paid_at         DATETIME NULL,
+  delivered_at    DATETIME NULL,
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_orders_status (status, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

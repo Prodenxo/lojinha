@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { formatBRL } from "@/lib/format";
 
@@ -213,6 +214,9 @@ export default function AdminPage() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center gap-2">
         <h1 className="mr-auto text-xl font-semibold">Produtos ({products.length})</h1>
+        <Link href="/admin/pedidos" className={button}>
+          Pedidos
+        </Link>
         <button className={button} disabled={busy} onClick={balance}>
           Ver saldo
         </button>

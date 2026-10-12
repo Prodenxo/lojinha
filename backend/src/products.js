@@ -11,7 +11,7 @@ const parseImages = (row) => ({
   images: typeof row.images === "string" ? JSON.parse(row.images) : (row.images ?? []),
 });
 
-const wrap = (handler) => (req, res, next) => handler(req, res).catch(next);
+export const wrap = (handler) => (req, res, next) => handler(req, res).catch(next);
 
 function slugify(text) {
   return text
@@ -73,13 +73,15 @@ publicRouter.get(
 // ---------- Rotas de admin (cadastro de produtos) ----------
 export const adminRouter = Router();
 
-adminRouter.use((req, res, next) => {
+export function requireAdmin(req, res, next) {
   const token = process.env.ADMIN_TOKEN;
   if (!token || req.get("x-admin-token") !== token) {
     return res.status(401).json({ error: "Não autorizado" });
   }
   next();
-});
+}
+
+adminRouter.use(requireAdmin);
 
 const EDITABLE = [
   "name", "description", "category", "emoji", "price_brl", "promo_price_brl",

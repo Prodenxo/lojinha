@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { pool } from "./db.js";
 import { migrate } from "./migrate.js";
+import { adminOrdersRouter, ordersRouter } from "./orders.js";
 import { adminRouter, publicRouter } from "./products.js";
 import { syncCatalog } from "./sync.js";
 
@@ -19,11 +20,13 @@ app.get("/health", async (_req, res) => {
 });
 
 app.use("/api", publicRouter);
+app.use("/api", ordersRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/admin", adminOrdersRouter);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
-  if (err.message?.startsWith("Partner API")) {
+  if (err.message?.startsWith("Partner API") || err.message?.startsWith("InfinitePay")) {
     return res.status(502).json({ error: "Fornecedor indisponível, tente novamente" });
   }
   res.status(500).json({ error: "Erro interno" });
