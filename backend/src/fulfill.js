@@ -81,7 +81,7 @@ export async function fulfillOrder(orderId) {
     [delivery, response.orderCode ?? null, response.totalCharged ?? null, orderId],
   );
   console.log(`Pedido ${order.code} entregue (fornecedor ${response.orderCode}).`);
-  await sendDeliveredEmail(order);
+  await sendDeliveredEmail(order, delivery);
 }
 
 // Tenta de novo os pedidos pagos que ainda não foram entregues.

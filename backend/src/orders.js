@@ -180,7 +180,7 @@ adminOrdersRouter.put(
     );
     if (!result.affectedRows) return res.status(409).json({ error: "Pedido não está pago" });
     // Só avisa na primeira entrega, não a cada correção do texto.
-    if (before[0]?.status === "paid") await sendDeliveredEmail(before[0]);
+    if (before[0]?.status === "paid") await sendDeliveredEmail(before[0], delivery);
     res.json({ ok: true });
   }),
 );
