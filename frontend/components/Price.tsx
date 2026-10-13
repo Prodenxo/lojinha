@@ -9,12 +9,15 @@ export function promoPrice(product: Pick<Product, "price_brl" | "promo_price_brl
 
 type Props = {
   product: Pick<Product, "price_brl" | "promo_price_brl">;
-  size?: "md" | "lg";
+  size?: "sm" | "md" | "lg";
 };
+
+// "sm" encolhe só no celular (cards de destaque, 4 por linha).
+const SIZES = { sm: "text-[11px] sm:text-lg", md: "text-lg", lg: "text-3xl" };
 
 export function Price({ product, size = "md" }: Props) {
   const promo = promoPrice(product);
-  const main = size === "lg" ? "text-3xl" : "text-lg";
+  const main = SIZES[size];
   return (
     <span className="flex flex-col">
       {promo && (

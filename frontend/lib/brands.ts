@@ -48,6 +48,22 @@ export function brandName(product: Pick<Product, "name" | "category">) {
   return product.category in GROUP_LABELS ? product.name.split(/\s+/)[0] : product.category;
 }
 
+// Chave que junta num só card as opções do mesmo serviço (1 mês, 3 meses, planos...).
+export const brandKey = (product: Pick<Product, "name" | "category">) =>
+  brandName(product).toLowerCase();
+
+// Título do card de um serviço com várias opções: as palavras que os nomes têm em comum.
+export function groupTitle(options: Pick<Product, "name" | "category">[]) {
+  const [first, ...rest] = options.map((option) => option.name.split(/\s+/));
+  let size = first.length;
+  for (const words of rest) {
+    let same = 0;
+    while (same < size && words[same]?.toLowerCase() === first[same].toLowerCase()) same++;
+    size = same;
+  }
+  return first.slice(0, size).join(" ") || brandName(options[0]);
+}
+
 // Combos ("Canva Business + Leonardo AI") mostram todas as marcas do nome,
 // desde que cada uma tenha logo; senão vale a marca da categoria.
 export function productBrands(product: Pick<Product, "name" | "category">) {

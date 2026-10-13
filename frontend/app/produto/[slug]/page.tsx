@@ -3,17 +3,25 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BuyForm } from "@/components/BuyForm";
 import { ProductVisual } from "@/components/ProductVisual";
-import { getProduct } from "@/lib/api";
-import { categoryLabel } from "@/lib/brands";
-import { Price } from "@/components/Price";
-import { deliveryLabel, durationLabel } from "@/lib/format";
+import { getProduct, getProducts } from "@/lib/api";
+import { brandKey, categoryLabel } from "@/lib/brands";
+import { Price, promoPrice } from "@/components/Price";
+import { deliveryLabel, durationLabel, formatBRL } from "@/lib/format";
 
 type Params = Promise<{ slug: string }>;
 
 async function ProductDetail({ params }: { params: Params }) {
   const { slug } = await params;
-  const product = await getProduct(slug);
+  const [product, catalog] = await Promise.all([
+    getProduct(slug),
+    getProducts().catch(() => []),
+  ]);
   if (!product) notFound();
+
+  // Outras opções do mesmo serviço (1 mês, 3 meses, outro plano...).
+  const options = catalog
+    .filter((p) => brandKey(p) === brandKey(product))
+    .sort((a, b) => (a.duration_days ?? 0) - (b.duration_days ?? 0) || a.price_brl - b.price_brl);
 
   const soldOut = product.stock <= 0;
   const whatsapp = process.env.WHATSAPP_NUMBER;
@@ -51,6 +59,28 @@ async function ProductDetail({ params }: { params: Params }) {
       <div className="flex flex-col gap-5">
         <h1 className="text-2xl font-semibold tracking-tight">{product.name}</h1>
         <Price product={product} size="lg" />
+
+        {options.some((option) => option.id !== product.id) && (
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-muted">Escolha a opção</p>
+            {options.map((option) => (
+              <Link
+                key={option.id}
+                href={`/produto/${option.slug}`}
+                replace
+                scroll={false}
+                className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-sm transition hover:border-accent ${
+                  option.id === product.id ? "border-accent bg-accent/10" : "border-border bg-surface"
+                }`}
+              >
+                <span>{option.name}</span>
+                <span className="shrink-0 font-semibold text-accent-strong">
+                  {formatBRL(promoPrice(option) ?? option.price_brl)}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
 
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {facts.map(([label, value]) => (
